@@ -18,6 +18,12 @@ app.use('/', require('./src/controller/'));
 var server = app.listen(PORT, function () {
     console.log('Node server is running..');
 });
+// console.log(process.env);
+console.log(__dirname );
+app.use(express.static('./wwwroot'));
+app.get('/*', (req, res) => {
+    res.sendFile(process.cwd() + '\\wwwroot\\index.html');
+});
 
 
 // register models
