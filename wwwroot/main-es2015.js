@@ -34,6 +34,17 @@ module.exports = "\r\n<app-writer (textContent)=\"textContent($event)\"  [collec
 
 /***/ }),
 
+/***/ "./node_modules/raw-loader/index.js!./src/app/add-note/search-note/search-note.component.html":
+/*!*******************************************************************************************!*\
+  !*** ./node_modules/raw-loader!./src/app/add-note/search-note/search-note.component.html ***!
+  \*******************************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<form [formGroup] = \"searchFormGrp\">\r\n    <div>\r\n        <input type=\"text\" formControlName=\"searchTextInput\" id=\"lname\" name=\"lname\"><br><br>\r\n    </div>\r\n    <div *ngFor=\"let note of notes\">\r\n        <!-- {{note._id}} -->\r\n        <div *ngFor=\"let content of note.mainContent\">\r\n            {{content.data}}\r\n        </div>\r\n    </div>\r\n</form>"
+
+/***/ }),
+
 /***/ "./node_modules/raw-loader/index.js!./src/app/add-note/writer/writer.component.html":
 /*!*********************************************************************************!*\
   !*** ./node_modules/raw-loader!./src/app/add-note/writer/writer.component.html ***!
@@ -63,7 +74,7 @@ module.exports = "<app-layout></app-layout>\r\n\r\n\r\n"
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<nav class=\"navigationBar\">\r\n    <a routerLink='/addnote' routerLinkActive='active'>Add Note</a>\r\n    <a routerLink='/addnote' routerLinkActive='active'>Search</a>\r\n    <a routerLink='/addnote' routerLinkActive='active'>Account</a>\r\n</nav>\r\n<div class =\"container-placement\">\r\n    <router-outlet></router-outlet>\r\n</div>"
+module.exports = "<nav class=\"navigationBar\">\r\n    <a routerLink='/addnote' routerLinkActive='active'>Add Note</a>\r\n    <a routerLink='/search' routerLinkActive='active'>Search</a>\r\n    <a routerLink='/addnote' routerLinkActive='active'>Account</a>\r\n</nav>\r\n<div class =\"container-placement\">\r\n    <router-outlet></router-outlet>\r\n</div>"
 
 /***/ }),
 
@@ -79,13 +90,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "NotesBusiness", function() { return NotesBusiness; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var src_app_store_notes_store__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/store/notes.store */ "./src/app/store/notes.store.ts");
+
 
 
 let NotesBusiness = class NotesBusiness {
     /**
      *
      */
-    constructor() {
+    constructor(store) {
+        this.store = store;
     }
     mapToStore(uiObj) {
         const data = {
@@ -93,7 +107,16 @@ let NotesBusiness = class NotesBusiness {
         };
         return data;
     }
+    searchNote(key) {
+        return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
+            const data = yield this.store.searchNote(key).toPromise();
+            return data;
+        });
+    }
 };
+NotesBusiness.ctorParameters = () => [
+    { type: src_app_store_notes_store__WEBPACK_IMPORTED_MODULE_2__["NotesStore"] }
+];
 NotesBusiness = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Injectable"])()
 ], NotesBusiness);
@@ -186,6 +209,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var src_core_core_module__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! src/core/core.module */ "./src/core/core.module.ts");
 /* harmony import */ var _store_notes_store__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! ../store/notes.store */ "./src/app/store/notes.store.ts");
 /* harmony import */ var _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! ./add-note-container/add-note-business */ "./src/app/add-note/add-note-container/add-note-business.ts");
+/* harmony import */ var _search_note_search_note_component__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! ./search-note/search-note.component */ "./src/app/add-note/search-note/search-note.component.ts");
+
 
 
 
@@ -199,13 +224,84 @@ let AddNoteModule = class AddNoteModule {
 };
 AddNoteModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
-        declarations: [_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"], _writer_writer_component__WEBPACK_IMPORTED_MODULE_4__["WriterComponent"]],
+        declarations: [_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"], _writer_writer_component__WEBPACK_IMPORTED_MODULE_4__["WriterComponent"], _search_note_search_note_component__WEBPACK_IMPORTED_MODULE_9__["SearchComponent"]],
         imports: [
             _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ReactiveFormsModule"], src_core_core_module__WEBPACK_IMPORTED_MODULE_6__["CoreModule"]
         ],
         providers: [_store_notes_store__WEBPACK_IMPORTED_MODULE_7__["NotesStore"], _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_8__["NotesBusiness"]]
     })
 ], AddNoteModule);
+
+
+
+/***/ }),
+
+/***/ "./src/app/add-note/search-note/search-note.component.css":
+/*!****************************************************************!*\
+  !*** ./src/app/add-note/search-note/search-note.component.css ***!
+  \****************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FkZC1ub3RlL3NlYXJjaC1ub3RlL3NlYXJjaC1ub3RlLmNvbXBvbmVudC5jc3MifQ== */"
+
+/***/ }),
+
+/***/ "./src/app/add-note/search-note/search-note.component.ts":
+/*!***************************************************************!*\
+  !*** ./src/app/add-note/search-note/search-note.component.ts ***!
+  \***************************************************************/
+/*! exports provided: SearchComponent */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchComponent", function() { return SearchComponent; });
+/* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
+/* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../add-note-container/add-note-business */ "./src/app/add-note/add-note-container/add-note-business.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+
+
+
+
+
+
+let SearchComponent = class SearchComponent {
+    /**
+     *
+     */
+    constructor(business) {
+        this.business = business;
+        this.searchSub = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
+    }
+    ngOnInit() {
+        this.searchFormGrp = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroup"]({
+            searchTextInput: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('')
+        });
+        this.searchFormGrp.controls['searchTextInput'].valueChanges.subscribe(s => {
+            if (s.length <= 3) {
+                return;
+            }
+            this.searchSub.next(s);
+        });
+        this.searchSub.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounceTime"])(1000)).subscribe((s) => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
+            this.notes = yield this.business.searchNote(s);
+        }));
+    }
+};
+SearchComponent.ctorParameters = () => [
+    { type: _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_3__["NotesBusiness"] }
+];
+SearchComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
+        selector: 'search-container',
+        template: __webpack_require__(/*! raw-loader!./search-note.component.html */ "./node_modules/raw-loader/index.js!./src/app/add-note/search-note/search-note.component.html"),
+        styles: [__webpack_require__(/*! ./search-note.component.css */ "./src/app/add-note/search-note/search-note.component.css")]
+    })
+], SearchComponent);
 
 
 
@@ -312,13 +408,16 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _angular_router__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/router */ "./node_modules/@angular/router/fesm2015/router.js");
 /* harmony import */ var _add_note_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./add-note/add-note-container/add-note-container.component */ "./src/app/add-note/add-note-container/add-note-container.component.ts");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _add_note_search_note_search_note_component__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./add-note/search-note/search-note.component */ "./src/app/add-note/search-note/search-note.component.ts");
+
 
 
 
 
 
 const routes = [
-    { path: 'addnote', component: _add_note_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"] }
+    { path: 'addnote', component: _add_note_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"] },
+    { path: 'search', component: _add_note_search_note_search_note_component__WEBPACK_IMPORTED_MODULE_5__["SearchComponent"] }
 ];
 let AppRoutingModule = class AppRoutingModule {
 };
@@ -439,10 +538,11 @@ var URI;
 (function (URI) {
     URI["SaveNote"] = "Notes";
     URI["GetNote"] = "";
+    URI["SearchNotes"] = "Notes/search";
 })(URI || (URI = {}));
 var ServiceHost;
 (function (ServiceHost) {
-    ServiceHost["host"] = "http://localhost:8080/api/";
+    ServiceHost["host"] = "http://sntpcvan.herokuapp.com/api/";
 })(ServiceHost || (ServiceHost = {}));
 
 
@@ -522,6 +622,9 @@ let NotesStore = class NotesStore {
         this.http.post(_contants_http_uri_constant__WEBPACK_IMPORTED_MODULE_3__["URI"].SaveNote, note).subscribe(s => console.log(s));
         return;
     }
+    searchNote(key) {
+        return this.http.get(_contants_http_uri_constant__WEBPACK_IMPORTED_MODULE_3__["URI"].SearchNotes + `?content=${key}`);
+    }
 };
 NotesStore.ctorParameters = () => [
     { type: src_core_communication_core_http__WEBPACK_IMPORTED_MODULE_2__["HttpCommunication"] }
@@ -557,6 +660,7 @@ let HttpCommunication = class HttpCommunication {
         this.http = http;
     }
     get(url) {
+        url = src_app_contants_http_uri_constant__WEBPACK_IMPORTED_MODULE_3__["ServiceHost"].host + url;
         return this.http.get(url);
     }
     post(url, body) {

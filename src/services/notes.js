@@ -26,7 +26,7 @@ async function searchNote(text) {
    return await notesDBC.find({
       mainContent: {
          $elemMatch: {
-            data: { $regex: '.*' + text + '.*' }
+            data: { $regex: '.*' + text + '.*', $options:'i' }
          }
       }
    });
