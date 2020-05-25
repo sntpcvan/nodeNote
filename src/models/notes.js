@@ -23,7 +23,7 @@ var notesSchema = new mongo.Schema({
 });
 // notesSchema.plugin(uniqueValidator);
 
-var model = mongo.model('notenodejs', notesSchema);
+var model = mongo.model('Notes', notesSchema, 'Notes');
 
 module.exports = {
     notesModel: model
