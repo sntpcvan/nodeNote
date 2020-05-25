@@ -579,7 +579,7 @@ var URI;
 })(URI || (URI = {}));
 var ServiceHost;
 (function (ServiceHost) {
-    ServiceHost["host"] = "http://sntpcvan.herokuapp.com/api/";
+    ServiceHost["host"] = "https://sntpcvan.herokuapp.com/api/";
 })(ServiceHost || (ServiceHost = {}));
 
 
