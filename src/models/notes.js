@@ -13,6 +13,7 @@ var notesSchema = new mongo.Schema({
         }
     ],
     userId: String,
+    rawhtml:String,
     tags: [
         {
             name: String,

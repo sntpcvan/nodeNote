@@ -41,7 +41,7 @@ module.exports = "\r\n<app-writer (textContent)=\"textContent($event)\"  [collec
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "<form [formGroup] = \"searchFormGrp\">\r\n    <div>\r\n        <input type=\"text\" formControlName=\"searchTextInput\" id=\"lname\" name=\"lname\"><br><br>\r\n    </div>\r\n    <div *ngFor=\"let note of notes\">\r\n        <!-- {{note._id}} -->\r\n        <div *ngFor=\"let content of note.mainContent\">\r\n            {{content.data}}\r\n        </div>\r\n    </div>\r\n</form>"
+module.exports = "<form [formGroup]=\"searchFormGrp\">\r\n    <div>\r\n        <input type=\"text\" formControlName=\"searchTextInput\" id=\"lname\" name=\"lname\"><br><br>\r\n    </div>\r\n\r\n    <!-- <div *ngFor=\"let note of notes\">\r\n        <div *ngFor=\"let content of note.mainContent\">\r\n            {{content.data}}\r\n        </div>\r\n        <div id=\"viewr\" innerHTML=\"{{note.rawhtml|safeHtml}}\"></div>\r\n        <a>Show Raw Note</a>\r\n    </div> -->\r\n    <div *ngFor=\"let note of notes;let first = first;\">\r\n        <div class=\"content-viwer-block\">\r\n            <div class=\"btn-group\" *ngIf='first'>\r\n                <button type=\"button\" class=\"btn btn-outline-primary\"\r\n                    (click)='onViewModeClick(currentViewType.Textual)'>Textual</button>\r\n                <button type=\"button\" class=\"btn btn-outline-primary\"\r\n                    (click)='onViewModeClick(currentViewType.Orginal)'>Orginal</button>\r\n                <button type=\"button\" class=\"btn btn-outline-primary\"\r\n                    (click)='onViewModeClick(currentViewType.Textual)'>Tags</button>\r\n            </div>\r\n            <div></div>\r\n            <div id='contentViewer' class=\"border border-primary viewer-zone\" *ngIf='buttonGroupDirty' [ngSwitch]='selectedView'>          \r\n                <ng-container *ngSwitchCase='currentViewType.Textual'>\r\n                    <div *ngFor=\"let content of note.mainContent\">\r\n                        {{content.data}}\r\n                    </div>\r\n                </ng-container>\r\n                <ng-container *ngSwitchCase='currentViewType.Orginal'>\r\n                    <div id=\"viewr\" innerHTML=\"{{note.rawhtml|safeHtml}}\"></div>\r\n                </ng-container>\r\n                <ng-container *ngSwitchCase='currentViewType.Textual'>\r\n                    Showing Tags\r\n                </ng-container>\r\n            </div>\r\n        </div>\r\n    </div>\r\n</form>"
 
 /***/ }),
 
@@ -101,15 +101,21 @@ let NotesBusiness = class NotesBusiness {
     constructor(store) {
         this.store = store;
     }
-    mapToStore(uiObj) {
+    mapToStore(uiObj, rawHTML) {
         const data = {
             mainContent: uiObj,
+            rawhtml: btoa(rawHTML)
         };
         return data;
     }
     searchNote(key) {
         return tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
             const data = yield this.store.searchNote(key).toPromise();
+            data.forEach(d => {
+                if (d.rawhtml) {
+                    d.rawhtml = atob(d.rawhtml);
+                }
+            });
             return data;
         });
     }
@@ -164,10 +170,11 @@ let AddNoteContainerComponent = class AddNoteContainerComponent {
     }
     ngOnInit() {
     }
-    textContent(text) {
+    textContent(value) {
+        let text = value.text;
         if (text.length == 1 && text[0].data == "")
             return;
-        const data = this.business.mapToStore(text);
+        const data = this.business.mapToStore(text, value.rawhtml);
         this.notesStore.saveNote(data);
     }
     clickSave() {
@@ -224,11 +231,11 @@ let AddNoteModule = class AddNoteModule {
 };
 AddNoteModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["NgModule"])({
-        declarations: [_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"], _writer_writer_component__WEBPACK_IMPORTED_MODULE_4__["WriterComponent"], _search_note_search_note_component__WEBPACK_IMPORTED_MODULE_9__["SearchComponent"]],
+        declarations: [_add_note_container_add_note_container_component__WEBPACK_IMPORTED_MODULE_3__["AddNoteContainerComponent"], _writer_writer_component__WEBPACK_IMPORTED_MODULE_4__["WriterComponent"], _search_note_search_note_component__WEBPACK_IMPORTED_MODULE_9__["SearchComponent"], _search_note_search_note_component__WEBPACK_IMPORTED_MODULE_9__["SafeHtmlPipe"]],
         imports: [
             _angular_common__WEBPACK_IMPORTED_MODULE_2__["CommonModule"], _angular_forms__WEBPACK_IMPORTED_MODULE_5__["ReactiveFormsModule"], src_core_core_module__WEBPACK_IMPORTED_MODULE_6__["CoreModule"]
         ],
-        providers: [_store_notes_store__WEBPACK_IMPORTED_MODULE_7__["NotesStore"], _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_8__["NotesBusiness"]]
+        providers: [_store_notes_store__WEBPACK_IMPORTED_MODULE_7__["NotesStore"], _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_8__["NotesBusiness"],]
     })
 ], AddNoteModule);
 
@@ -243,7 +250,7 @@ AddNoteModule = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IiIsImZpbGUiOiJzcmMvYXBwL2FkZC1ub3RlL3NlYXJjaC1ub3RlL3NlYXJjaC1ub3RlLmNvbXBvbmVudC5jc3MifQ== */"
+module.exports = "/* .content-viwer-block div{\r\n \r\n\r\n} */\r\n\r\n.viewer-zone{\r\n    width: 75%;\r\n    height: auto;\r\n    margin:10px 0px 0px 0px;\r\n}\r\n\r\n\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvYWRkLW5vdGUvc2VhcmNoLW5vdGUvc2VhcmNoLW5vdGUuY29tcG9uZW50LmNzcyJdLCJuYW1lcyI6W10sIm1hcHBpbmdzIjoiQUFBQTs7O0dBR0c7O0FBRUg7SUFDSSxVQUFVO0lBQ1YsWUFBWTtJQUNaLHVCQUF1QjtBQUMzQiIsImZpbGUiOiJzcmMvYXBwL2FkZC1ub3RlL3NlYXJjaC1ub3RlL3NlYXJjaC1ub3RlLmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIvKiAuY29udGVudC12aXdlci1ibG9jayBkaXZ7XHJcbiBcclxuXHJcbn0gKi9cclxuXHJcbi52aWV3ZXItem9uZXtcclxuICAgIHdpZHRoOiA3NSU7XHJcbiAgICBoZWlnaHQ6IGF1dG87XHJcbiAgICBtYXJnaW46MTBweCAwcHggMHB4IDBweDtcclxufVxyXG5cclxuIl19 */"
 
 /***/ }),
 
@@ -251,35 +258,43 @@ module.exports = "\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW
 /*!***************************************************************!*\
   !*** ./src/app/add-note/search-note/search-note.component.ts ***!
   \***************************************************************/
-/*! exports provided: SearchComponent */
+/*! exports provided: SearchComponent, SafeHtmlPipe */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchComponent", function() { return SearchComponent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SafeHtmlPipe", function() { return SafeHtmlPipe; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
-/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
-/* harmony import */ var _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../add-note-container/add-note-business */ "./src/app/add-note/add-note-container/add-note-business.ts");
-/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
-/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+/* harmony import */ var src_app_store_notes_model__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! src/app/store/notes.model */ "./src/app/store/notes.model.ts");
+/* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
+/* harmony import */ var _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ../add-note-container/add-note-business */ "./src/app/add-note/add-note-container/add-note-business.ts");
+/* harmony import */ var rxjs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! rxjs */ "./node_modules/rxjs/_esm2015/index.js");
+/* harmony import */ var rxjs_operators__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! rxjs/operators */ "./node_modules/rxjs/_esm2015/operators/index.js");
+/* harmony import */ var _angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! @angular/platform-browser */ "./node_modules/@angular/platform-browser/fesm2015/platform-browser.js");
 
 
 
 
 
 
+
+
+// import { SecurityContext } from '@angular/compiler/src/core';
 let SearchComponent = class SearchComponent {
     /**
      *
      */
-    constructor(business) {
+    constructor(business, sanitized) {
         this.business = business;
-        this.searchSub = new rxjs__WEBPACK_IMPORTED_MODULE_4__["Subject"]();
+        this.sanitized = sanitized;
+        this.searchSub = new rxjs__WEBPACK_IMPORTED_MODULE_5__["Subject"]();
+        this.currentViewType = src_app_store_notes_model__WEBPACK_IMPORTED_MODULE_2__["ViewType"];
     }
     ngOnInit() {
-        this.searchFormGrp = new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormGroup"]({
-            searchTextInput: new _angular_forms__WEBPACK_IMPORTED_MODULE_2__["FormControl"]('')
+        this.searchFormGrp = new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormGroup"]({
+            searchTextInput: new _angular_forms__WEBPACK_IMPORTED_MODULE_3__["FormControl"]('')
         });
         this.searchFormGrp.controls['searchTextInput'].valueChanges.subscribe(s => {
             if (s.length <= 3) {
@@ -287,21 +302,59 @@ let SearchComponent = class SearchComponent {
             }
             this.searchSub.next(s);
         });
-        this.searchSub.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_5__["debounceTime"])(1000)).subscribe((s) => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
-            this.notes = yield this.business.searchNote(s);
+        this.searchSub.pipe(Object(rxjs_operators__WEBPACK_IMPORTED_MODULE_6__["debounceTime"])(1000)).subscribe((s) => tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"](this, void 0, void 0, function* () {
+            let notes = yield this.business.searchNote(s);
+            //  notes.forEach(s => this.sanitized.bypassSecurityTrustHtml(s.rawhtml))
+            this.notes = notes;
         }));
+    }
+    getHtml(html) {
+        const htmls = this.sanitized.sanitize(1, this.sanitized.bypassSecurityTrustHtml(html));
+        return htmls;
+    }
+    onViewModeClick(value) {
+        this.selectedView = value;
+        this.buttonGroupDirty = true;
     }
 };
 SearchComponent.ctorParameters = () => [
-    { type: _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_3__["NotesBusiness"] }
+    { type: _add_note_container_add_note_business__WEBPACK_IMPORTED_MODULE_4__["NotesBusiness"] },
+    { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__["DomSanitizer"] }
 ];
 SearchComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Component"])({
         selector: 'search-container',
         template: __webpack_require__(/*! raw-loader!./search-note.component.html */ "./node_modules/raw-loader/index.js!./src/app/add-note/search-note/search-note.component.html"),
+        encapsulation: _angular_core__WEBPACK_IMPORTED_MODULE_1__["ViewEncapsulation"].None,
         styles: [__webpack_require__(/*! ./search-note.component.css */ "./src/app/add-note/search-note/search-note.component.css")]
     })
 ], SearchComponent);
+
+
+let SafeHtmlPipe = class SafeHtmlPipe {
+    constructor(sanitized) {
+        this.sanitized = sanitized;
+    }
+    transform(value) {
+        const replacedQuotes = value.replace(/&quot;/g, '\'');
+        const stripped = this.sanitized.sanitize(1, this.sanitized.bypassSecurityTrustHtml(replacedQuotes));
+        // let ss = document.getElementById('viewr');
+        // ss.style.color = 'red';
+        let parser = new DOMParser();
+        let ourDOM = parser.parseFromString(stripped, "text/xml");
+        let style = ourDOM.children[0].getAttribute('style');
+        let ss = document.getElementById('viewr');
+        ss.setAttribute('style', style);
+        // ss.appendChild(ourDOM);
+        return stripped;
+    }
+};
+SafeHtmlPipe.ctorParameters = () => [
+    { type: _angular_platform_browser__WEBPACK_IMPORTED_MODULE_7__["DomSanitizer"] }
+];
+SafeHtmlPipe = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
+    Object(_angular_core__WEBPACK_IMPORTED_MODULE_1__["Pipe"])({ name: 'safeHtml' })
+], SafeHtmlPipe);
 
 
 
@@ -322,7 +375,7 @@ module.exports = ".writer {\r\n    border-style: solid;\r\n    border-color: bla
 /*!*****************************************************!*\
   !*** ./src/app/add-note/writer/writer.component.ts ***!
   \*****************************************************/
-/*! exports provided: WriterComponent, TextAttribute, TextContent */
+/*! exports provided: WriterComponent, TextAttribute, TextContent, WriterEmit */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -330,6 +383,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WriterComponent", function() { return WriterComponent; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextAttribute", function() { return TextAttribute; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "TextContent", function() { return TextContent; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "WriterEmit", function() { return WriterEmit; });
 /* harmony import */ var tslib__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! tslib */ "./node_modules/tslib/tslib.es6.js");
 /* harmony import */ var _angular_core__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! @angular/core */ "./node_modules/@angular/core/fesm2015/core.js");
 /* harmony import */ var _angular_forms__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @angular/forms */ "./node_modules/@angular/forms/fesm2015/forms.js");
@@ -355,8 +409,9 @@ let WriterComponent = class WriterComponent {
     getTextFromWriter() {
         const element = document.getElementById('textWriterZone');
         const parsed = this.parseNextLine(element.innerText);
+        const rawHtml = element.innerHTML;
         element.innerHTML = "";
-        this.textContent.emit(parsed);
+        this.textContent.emit({ text: parsed, rawhtml: rawHtml });
     }
     parseNextLine(raw) {
         const parsed = raw.split('\n').map(o => {
@@ -388,6 +443,8 @@ var TextAttribute;
     TextAttribute["Bole"] = "<b>";
 })(TextAttribute || (TextAttribute = {}));
 class TextContent {
+}
+class WriterEmit {
 }
 
 
@@ -543,6 +600,7 @@ var URI;
 var ServiceHost;
 (function (ServiceHost) {
     ServiceHost["host"] = "https://sntpcvan.herokuapp.com/api/";
+    //  host = "http://localhost:8080/api/"
 })(ServiceHost || (ServiceHost = {}));
 
 
@@ -555,7 +613,7 @@ var ServiceHost;
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-module.exports = ".navigationBar a {\r\n    margin-right: 30px;\r\n}\r\n\r\n\r\n\r\n.container-placement{\r\n    margin-top: 32px;\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbGF5b3V0L2xheW91dC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksa0JBQWtCO0FBQ3RCOzs7O0FBSUE7SUFDSSxnQkFBZ0I7QUFDcEIiLCJmaWxlIjoic3JjL2FwcC9sYXlvdXQvbGF5b3V0LmNvbXBvbmVudC5jc3MiLCJzb3VyY2VzQ29udGVudCI6WyIubmF2aWdhdGlvbkJhciBhIHtcclxuICAgIG1hcmdpbi1yaWdodDogMzBweDtcclxufVxyXG5cclxuXHJcblxyXG4uY29udGFpbmVyLXBsYWNlbWVudHtcclxuICAgIG1hcmdpbi10b3A6IDMycHg7XHJcbn0iXX0= */"
+module.exports = ".navigationBar a {\r\n    margin-right: 30px;\r\n    margin-left: 20px;\r\n}\r\n\r\n\r\n\r\n.container-placement{\r\n    margin-top: 32px;\r\n    margin-left: 20px;\r\n}\r\n/*# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbInNyYy9hcHAvbGF5b3V0L2xheW91dC5jb21wb25lbnQuY3NzIl0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiJBQUFBO0lBQ0ksa0JBQWtCO0lBQ2xCLGlCQUFpQjtBQUNyQjs7OztBQUlBO0lBQ0ksZ0JBQWdCO0lBQ2hCLGlCQUFpQjtBQUNyQiIsImZpbGUiOiJzcmMvYXBwL2xheW91dC9sYXlvdXQuY29tcG9uZW50LmNzcyIsInNvdXJjZXNDb250ZW50IjpbIi5uYXZpZ2F0aW9uQmFyIGEge1xyXG4gICAgbWFyZ2luLXJpZ2h0OiAzMHB4O1xyXG4gICAgbWFyZ2luLWxlZnQ6IDIwcHg7XHJcbn1cclxuXHJcblxyXG5cclxuLmNvbnRhaW5lci1wbGFjZW1lbnR7XHJcbiAgICBtYXJnaW4tdG9wOiAzMnB4O1xyXG4gICAgbWFyZ2luLWxlZnQ6IDIwcHg7XHJcbn0iXX0= */"
 
 /***/ }),
 
@@ -586,6 +644,26 @@ LayoutComponent = tslib__WEBPACK_IMPORTED_MODULE_0__["__decorate"]([
     })
 ], LayoutComponent);
 
+
+
+/***/ }),
+
+/***/ "./src/app/store/notes.model.ts":
+/*!**************************************!*\
+  !*** ./src/app/store/notes.model.ts ***!
+  \**************************************/
+/*! exports provided: ViewType */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ViewType", function() { return ViewType; });
+var ViewType;
+(function (ViewType) {
+    ViewType[ViewType["Textual"] = 0] = "Textual";
+    ViewType[ViewType["Orginal"] = 1] = "Orginal";
+    ViewType[ViewType["Tags"] = 2] = "Tags";
+})(ViewType || (ViewType = {}));
 
 
 /***/ }),

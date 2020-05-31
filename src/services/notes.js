@@ -54,7 +54,8 @@ function mapNotes(note) {
       lastModified: currentTime,
       mainContent: note.mainContent,
       userId: userId,
-      tags: tag
+      tags: tag,
+      rawhtml:note.rawhtml
    }
 }
 
